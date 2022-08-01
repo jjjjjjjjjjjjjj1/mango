@@ -8,6 +8,9 @@ using UnityEngine.UI;
 
 public class SteamLobby : MonoBehaviour
 {
+
+    public static SteamLobby Instance;
+
     //callbacks
     protected Callback<LobbyCreated_t> LobbyCreated;
     protected Callback<GameLobbyJoinRequested_t> JoinRequest;
@@ -19,13 +22,13 @@ public class SteamLobby : MonoBehaviour
     private CustomNetworkManager manager;
 
     //gameobject
-    public GameObject HostButton;
-    public Text LobbyNameText;
+
 
 
     private void Start()
     {
         if (!SteamManager.Initialized) { return; }
+        if (Instance == null) { Instance = this; }
         manager = GetComponent<CustomNetworkManager>();
         LobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
         JoinRequest = Callback<GameLobbyJoinRequested_t>.Create(OnJoinRequest);
@@ -61,10 +64,9 @@ public class SteamLobby : MonoBehaviour
     private void OnLobbyEntered(LobbyEnter_t callback)
     {
         //everyone
-        HostButton.SetActive(false);
+
         CurrentLobbyID = callback.m_ulSteamIDLobby;
-        LobbyNameText.gameObject.SetActive(true);
-        LobbyNameText.text = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "name");
+
 
         //Clients
         if (NetworkServer.active) { return; }
