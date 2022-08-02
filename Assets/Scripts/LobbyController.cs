@@ -93,6 +93,22 @@ public class LobbyController : MonoBehaviour
         {
             canStart = true;
         }
+
+        if (canStart)
+        {
+            if (LocalPlayerController.PlayerIdNumber == 1)
+            {
+                StartGameButton.interactable = true;
+            }
+            else
+            {
+                StartGameButton.interactable = false;
+            }
+        }
+        else
+        {
+            StartGameButton.interactable = false;
+        }
     }
 
 
@@ -148,6 +164,7 @@ public class LobbyController : MonoBehaviour
         NewPlayerItemScript.PlayerName = player.PlayerName;
         NewPlayerItemScript.ConnectionID = player.ConnectionID;
         NewPlayerItemScript.PlayerSteamID = player.PlayerSteamID;
+        NewPlayerItemScript.Ready = player.Ready;
         NewPlayerItemScript.SetPlayerValues();
 
         NewPlayerItem.transform.SetParent(PlayerListViewContent.transform);
@@ -198,10 +215,16 @@ public class LobbyController : MonoBehaviour
                 {
                     // Script that corresponds with the current player we're accessing using the loop
                     PlayerListItemScript.PlayerName = player.PlayerName;
+                    PlayerListItemScript.Ready = player.Ready;
                     PlayerListItemScript.SetPlayerValues();
+                    if(player == LocalPlayerController)
+                    {
+                        UpdateButton();
+                    }
                 }
             }
         }
+        CheckIfCanStart();
     }
     public void RemovePlayerItem()
     {
