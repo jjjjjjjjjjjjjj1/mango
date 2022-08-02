@@ -86,10 +86,11 @@ public class LobbyController : MonoBehaviour
         {
             if (player.Ready)
             {
-                check = check + 1;
+                check += 1;
             }
         }
-        if (check >= players / 2)
+        
+        if (check >= players / 2.0f && check > 0)
         {
             canStart = true;
         }
