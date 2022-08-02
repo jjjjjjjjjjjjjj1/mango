@@ -45,7 +45,7 @@ public class PlayerObjectController : NetworkBehaviour
         this.PlayerReadyUpdate(this.Ready, !this.Ready);
     }
 
-    private void ChangeReady()
+    public void ChangeReady()
     {
         if (hasAuthority)
         {
@@ -67,10 +67,6 @@ public class PlayerObjectController : NetworkBehaviour
         Manager.GamePlayers.Add(this);
         LobbyController.Instance.UpdateLobbyName();
         LobbyController.Instance.UpdatePlayerList();
-
-        
-
-
     }
 
     public override void OnStopClient()
