@@ -25,8 +25,8 @@ public class PlayerListItem : MonoBehaviour
     {
         if (Ready) //ready
         {
+            PlayerReadyText.color = new Color(11/255f, 128/255f, 62/255f);
             PlayerReadyText.text = "Ready";
-            PlayerReadyText.color = Color.green;
         }
         else // not ready
         {

@@ -8,10 +8,6 @@ using System.Linq;
 
 public class LobbyController : MonoBehaviour
 {
-
-
-
-
     public static string LocalGamePlayerObjectName = "LocalGamePlayer";
 
     public static LobbyController Instance;
@@ -89,7 +85,7 @@ public class LobbyController : MonoBehaviour
                 check += 1;
             }
         }
-        
+
         if (check >= players / 2.0f && check > 0)
         {
             canStart = true;
@@ -218,7 +214,7 @@ public class LobbyController : MonoBehaviour
                     PlayerListItemScript.PlayerName = player.PlayerName;
                     PlayerListItemScript.Ready = player.Ready;
                     PlayerListItemScript.SetPlayerValues();
-                    if(player == LocalPlayerController)
+                    if (player == LocalPlayerController)
                     {
                         UpdateButton();
                     }
@@ -249,6 +245,11 @@ public class LobbyController : MonoBehaviour
                 ObjectToRemove = null;
             }
         }
+    }
+
+    public void StartGame(string SceneName)
+    {
+        LocalPlayerController.CanStartGame(SceneName);
     }
 
 }
