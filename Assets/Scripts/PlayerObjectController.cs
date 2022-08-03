@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Steamworks;
+using UnityEngine.SceneManagement;
 
 public class PlayerObjectController : NetworkBehaviour
 {
@@ -13,6 +14,8 @@ public class PlayerObjectController : NetworkBehaviour
     [SyncVar(hook = nameof(PlayerNameUpdate))] public string PlayerName;
     [SyncVar(hook = nameof(PlayerReadyUpdate))] public bool Ready;
     private CustomNetworkManager manager;
+    public Camera Camera;
+    public AudioListener AudioListener;
 
     private CustomNetworkManager Manager
     {
@@ -30,6 +33,30 @@ public class PlayerObjectController : NetworkBehaviour
     private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
+        SceneManager.activeSceneChanged += OnSceneChanged;
+        ManageCamera();
+    }
+
+    private void ManageCamera()
+    {
+        if (SceneManager.GetActiveScene().name == "Game")
+        {
+            if (hasAuthority)
+            {
+                Camera.enabled = true;
+                AudioListener.enabled = true;
+            }
+            else
+            {
+                Camera.enabled = false;
+                AudioListener.enabled = false;
+            }
+        }
+    }
+
+    private void OnSceneChanged(Scene current, Scene next)
+    {
+        ManageCamera();
     }
 
     private void PlayerReadyUpdate(bool oldValue, bool newValue)
@@ -100,7 +127,7 @@ public class PlayerObjectController : NetworkBehaviour
         }
     }
 
-// Start game
+    // Start game
 
     public void CanStartGame(string SceneName)
     {
@@ -108,11 +135,11 @@ public class PlayerObjectController : NetworkBehaviour
         {
             CmdCanStartGame(SceneName);
         }
-    }   
-    
+    }
+
     [Command]
     private void CmdCanStartGame(string SceneName)
     {
         manager.StartGame(SceneName);
-    }    
+    }
 }
