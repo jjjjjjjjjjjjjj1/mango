@@ -7,11 +7,22 @@ using UnityEngine.SceneManagement;
 public class PlayerMovementController : NetworkBehaviour
 {
     public float Speed = 20.0f;
-    public GameObject PlayerModel;
+    public float gravity = -9.81f;
     public float MouseSensitivity = 200f;
-    public float xRotation = 0f;
+    public float jumpHeight = 3f;
+
+    public GameObject PlayerModel;
+    float xRotation = 0f;
     public Camera Camera;
     public CharacterController Controller;
+
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+
+    Vector3 velocity;
+    bool isGrounded;
+
 
     private void Start()
     {
@@ -20,6 +31,7 @@ public class PlayerMovementController : NetworkBehaviour
 
     private void Update()
     {
+        // TODO: optimize by subscribing to SceneManager.activeSceneChanged instead of getting active scene every frame
         if (SceneManager.GetActiveScene().name == "Game")
         {
             if (!PlayerModel.activeSelf)
@@ -48,8 +60,21 @@ public class PlayerMovementController : NetworkBehaviour
 
     public void HandleMovement()
     {
+        HandleVelocity();
         HandleWalking();
+        HandleJumping();
         HandleLooking();
+        HandleGravity();
+    }
+
+    private void HandleVelocity()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
     }
 
     private void HandleWalking()
@@ -60,6 +85,14 @@ public class PlayerMovementController : NetworkBehaviour
         Vector3 moveDirection = transform.right * x + transform.forward * z;
 
         Controller.Move(Speed * Time.deltaTime * moveDirection);
+    }
+
+    private void HandleJumping()
+    {
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
     }
 
     private void HandleLooking()
@@ -73,5 +106,11 @@ public class PlayerMovementController : NetworkBehaviour
         Camera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         gameObject.transform.Rotate(Vector3.up * mouseX);
 
+    }
+
+    private void HandleGravity()
+    {
+        velocity.y += gravity * Time.deltaTime;
+        Controller.Move(velocity * Time.deltaTime);
     }
 }
